@@ -255,7 +255,7 @@ psql: warning: extra command-line argument "pivotal" ignored
 ## Conclusions
 In summary, Greenplum works seamlessly with Apache Spark by using Postgresql JDBC driver. Apache Spark provides parallel data transfer to Greenplum via JDBC driver and this data transfer process works between Greenplum master host and Spark workers. Thus, the performance constraints are limited as it is not using the high speed data transfer features provided by Greenplum gpfdist protocol
 
-If you want to setup this example in approximately 15 mins, you can visit this github repository with step by step instructions to run Greenplum with Apache Spark.
+
 
 
 
