@@ -1,0 +1,27 @@
+# Compiled class file
+*.class
+.DS_Store
+# Log file
+*.log
+*.bin
+*.classpath
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# Ignored folders
+libs
+build
+
+.gradle
+*.iml
+*.ipr
+*.iws
+temp/*
