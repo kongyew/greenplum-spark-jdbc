@@ -4,28 +4,27 @@ This readme describes how to setup Greenplum that is running inside docker.
 ## Pre-requisites:
 - [docker-compose](http://docs.docker.com/compose)
 
-# Using docker-compose
-To create a simplistic standalone cluster with the following command. It builds a docker image with Pivotal Greenplum binaries and download some existing images such as Spark master and worker.
+# Using docker-compose to initialize Greenplum cluster
+To create a standalone Greenplum cluster with the following command below. It builds a docker image with Pivotal Greenplum binaries and download some existing images such as Spark master and worker.
 ```
     docker-compose up
 ```
 The Greenplum DB cluster will be running at `greenplumsparkjdbc_gpdb_1` with two segments. To access this docker instance, exec into a container:
 ```
-    docker exec -it greenplumsparkjdbc_gpdb_1 bin/bash
+  $ docker exec -it greenplumsparkjdbc_gpdb_1 bin/bash
 ```  
-
 
 ##  How to run the setupDB.sh
 1. Connect to the Spark master docker image
 ```
-docker exec -it greenplumsparkjdbc_gpdb_1 bin/bash
+ $ docker exec -it greenplumsparkjdbc_gpdb_1 bin/bash
 ```
 2. Execute the command below to access the scripts folder under "/code/data"
 ```
 [root@d632f535db87]# cd /code/data
 ```
 
-3. Run "scripts/setupDB.sh", in order to create a database and table.
+3. Run `scripts/setupDB.sh`, in order to create a database and table.
 ```
 [root@d632f535db87 data]# scripts/setupDB.sh
 psql:./sample_table.sql:1: NOTICE:  table "basictable" does not exist, skipping
@@ -53,7 +52,7 @@ INSERT 0 2304
 INSERT 0 4608
 ```
 
-4. Run the following psql command to verify database and table are created correctly
+4. Run the following psql command to verify database (basic_db) and table (basictable) are created correctly.
 ```
 [root@d632f535db87 data]# psql -h localhost -U gpadmin -d basic_db -c "\dt" -w pivotal
 psql: warning: extra command-line argument "pivotal" ignored
