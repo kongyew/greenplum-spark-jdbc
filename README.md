@@ -18,19 +18,28 @@ and Spark Streaming for stream processing.
 
 
 # Using docker-compose
-To create a simplistic standalone cluster with the following command. It builds a docker image with Pivotal Greenplum binaries and download some existing images such as Spark master and worker.
+To create a simplistic standalone cluster with the following command in the github root directory.
+It builds a docker image with Pivotal Greenplum binaries and download some existing images such as Spark master and worker.
 ```
-    docker-compose up
+    $ docker-compose up
 ```
-The SparkUI will be running at `http://${YOUR_DOCKER_HOST}:8080` with one worker listed. To run `pyspark`, exec into a container:
 
-    docker exec -it greenplumsparkjdbc_master_1 bin/bash
-    bin/pyspark
-
+    The SparkUI will be running at `http://${YOUR_DOCKER_HOST}:8080` with one worker listed. To run `pyspark`, exec into a container:
+```
+    $ docker exec -it greenplumsparkjdbc_master_1 bin/bash
+    $ bin/pyspark
+```
 To run `SparkPi`, exec into a container:
+```
+    $ docker exec -it greenplumsparkjdbc_master_1 /bin/bash
+    $ bin/run-example SparkPi 10
+```
 
-    docker exec -it greenplumsparkjdbc_master_1 /bin/bash
-    bin/run-example SparkPi 10
+To access `Greenplum cluster`, exec into a container:
+```
+    $ docker exec -it greenplumsparkjdbc_master_1 bash
+    root@master:/usr/spark-2.1.0#
+```
 
 ##  How to connect to Greenplum with JDBC driver
 In this example, we will describe how to configure JDBC driver when you run Spark-shell.
@@ -39,7 +48,7 @@ In this example, we will describe how to configure JDBC driver when you run Spar
 ```
 $docker exec -it greenplumsparkjdbc_master_1 /bin/bash
 ```
-2. Execute the command below to download jar into ~/.ivy2/jars directory and type "":quit" to exit the Spark shell
+2. Execute the command below to download jar into `~/.ivy2/jars` directory and type `:quit` to exit the Spark shell
 ```
 root@master:/usr/spark-2.1.0#bin/spark-shell --packages org.postgresql:postgresql:42.1.1
 Ivy Default Cache set to: /root/.ivy2/cache
@@ -72,7 +81,7 @@ scala>
 ```
 
 4. Verify JDBC driver is successfully loaded by Spark Shell
-You can follow the example below to verify the JDBC driver. The scala repl confirms the driver is accessible by show “res1” result.
+You can follow the example below to verify the JDBC driver. The scala repl confirms the driver is accessible by returning `res1` result.
 ```
 scala> Class.forName("org.postgresql.Driver")
 res1: Class[_] = class org.postgresql.Driver
