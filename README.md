@@ -14,19 +14,17 @@ and Spark Streaming for stream processing.
 
 <http://spark.apache.org/>
 
-## Greenplum with Spark using JDBC
 ## Pre-requisites:
 - [docker-compose](http://docs.docker.com/compose)
 
-
 # Using docker-compose
-To create a simplistic standalone cluster with the following command in the github root directory.
-It builds a docker image with Pivotal Greenplum binaries and download some existing images such as Spark master and worker.
+To create a standalone Greenplum cluster with the following command in the github root directory.
+It builds a docker image with Pivotal Greenplum binaries and download some existing images such as Spark master and worker. Initially, it may take some time to download the docker image.
 ```
     $ docker-compose up
 ```
 
-    The SparkUI will be running at `http://${YOUR_DOCKER_HOST}:8080` with one worker listed. To run `pyspark`, exec into a container:
+The SparkUI will be running at `http://${YOUR_DOCKER_HOST}:8080` with one worker listed. To run `pyspark`, exec into a container:
 ```
     $ docker exec -it greenplumsparkjdbc_master_1 bin/bash
     $ bin/pyspark
@@ -43,12 +41,12 @@ To access `Greenplum cluster`, exec into a container:
     root@master:/usr/spark-2.1.0#
 ```
 
-##  How to connect to Greenplum with JDBC driver
+##  How to connect to Greenplum and Spark via JDBC driver
 In this example, we will describe how to configure JDBC driver when you run Spark-shell.
 
 1. Connect to the Spark master docker image
 ```
-$docker exec -it greenplumsparkjdbc_master_1 /bin/bash
+$ docker exec -it greenplumsparkjdbc_master_1 /bin/bash
 ```
 2. Execute the command below to download jar into `~/.ivy2/jars` directory and type `:quit` to exit the Spark shell
 ```
@@ -190,7 +188,7 @@ scala> df.explain
 ## How to write data from Spark DataFrame into Greenplum
 In this section, you can write data from Spark DataFrame into Greenplum table.
 
-1. Determine the number of records in the "basictable" table.  
+1. Determine the number of records in the "basictable" table by using psql command.  
 ```
 $ docker exec -it greenplumsparkjdbc_gpdb_1 /bin/bash
 [root@d632f535db87 data]# psql -h localhost -U gpadmin -d basic_db -c "select count(*) from basictable" -w pivotal
@@ -220,16 +218,14 @@ $ docker exec -it greenplumsparkjdbc_gpdb_1 /bin/bash
 psql: warning: extra command-line argument "pivotal" ignored
  count
 -------
-73728
+36864
 (1 row)
 ```
 
-4. Next, you can write DataFrame data into an new Greenplum table.
+4. Next, you can write DataFrame data into an new Greenplum table via `append` mode.
 ```
 scala>df.write.mode("Append") .jdbc( url = jdbcUrl, table = "NEWTable", connectionProperties = connectionProperties)
 ```
-updateDF.write.mode("Append") .jdbc( url = jdbcUrl, table = "NEWTable", connectionProperties = connectionProperties)
-
 
 5. Run psql commands to verify the new table with new records.
 ```
@@ -251,13 +247,11 @@ psql: warning: extra command-line argument "pivotal" ignored
 (1 row)
 ```
 
+## Performance Limitations:
+Apache Spark provides parallel data transfer to Greenplum via JDBC driver and this data transfer process works between Greenplum master host and Spark workers. Thus, the performance constraints are limited as it is not using the high speed data transfer features provided by Greenplum gpfdist protocol.
 
 ## Conclusions
-In summary, Greenplum works seamlessly with Apache Spark by using Postgresql JDBC driver. Apache Spark provides parallel data transfer to Greenplum via JDBC driver and this data transfer process works between Greenplum master host and Spark workers. Thus, the performance constraints are limited as it is not using the high speed data transfer features provided by Greenplum gpfdist protocol
-
-
-
-
+In summary, Greenplum works seamlessly with Apache Spark by using Postgresql JDBC driver.
 
 ## License
-Apache
+MIT
