@@ -26,19 +26,19 @@ It builds a docker image with Pivotal Greenplum binaries and download some exist
 
 The SparkUI will be running at `http://${YOUR_DOCKER_HOST}:8080` with one worker listed. To run `pyspark`, exec into a container:
 ```
-    $ docker exec -it greenplumsparkjdbc_master_1 bin/bash
+    $ docker exec -it greenplum-spark-jdbc_master_1 bash
     $ bin/pyspark
 ```
 To run `SparkPi`, exec into a container:
 ```
-    $ docker exec -it greenplumsparkjdbc_master_1 /bin/bash
+    $ docker exec -it greenplum-spark-jdbc_master_1 bash
     $ bin/run-example SparkPi 10
 ```
 
 To access `Greenplum cluster`, exec into a container:
 ```
-    $ docker exec -it greenplumsparkjdbc_master_1 bash
-    root@master:/usr/spark-2.1.0#
+    $ docker exec -it greenplum-spark-jdbc_gpdb_1 bin/bash
+
 ```
 
 ##  How to connect to Greenplum and Spark via JDBC driver
@@ -46,7 +46,7 @@ In this example, we will describe how to configure JDBC driver when you run Spar
 
 1. Connect to the Spark master docker image
 ```
-$ docker exec -it greenplumsparkjdbc_master_1 /bin/bash
+$ docker exec -it greenplum-spark-jdbc_master_1 bash
 ```
 2. Execute the command below to download jar into `~/.ivy2/jars` directory and type `:quit` to exit the Spark shell
 ```
@@ -105,18 +105,13 @@ By default, you can run the command below to retrieve data from Greenplum with a
 scala> :paste
 // Entering paste mode (ctrl-D to finish)
 // that gives an one-partition Dataset
-val opts = Map(
-  "url" -> "jdbc:postgresql://greenplumsparkjdbc_gpdb_1/basic_db?user=gpadmin&password=pivotal",
-  "dbtable" -> "basictable")
-val df = spark.
-  read.
-  format("jdbc").
-  options(opts).
-  load
+val opts = Map("url" -> "jdbc:postgresql://greenplum-spark-jdbc_gpdb_1/basic_db?user=gpadmin&password=pivotal","dbtable" -> "basictable")
+
+val df = spark.read.format("jdbc").options(opts).load()
 
   // Exiting paste mode, now interpreting.
 
-opts: scala.collection.immutable.Map[String,String] = Map(url -> jdbc:postgresql://greenplumsparkjdbc_gpdb_1/basic_db?user=gpadmin&password=pivotal, dbtable -> basictable)
+opts: scala.collection.immutable.Map[String,String] = Map(url -> jdbc:postgresql://greenplum-spark-jdbc_gpdb_1/basic_db?user=gpadmin&password=pivotal, dbtable -> basictable)
 df: org.apache.spark.sql.DataFrame = [id: int, value: string]
 ```
 
@@ -190,7 +185,7 @@ In this section, you can write data from Spark DataFrame into Greenplum table.
 
 1. Determine the number of records in the "basictable" table by using psql command.  
 ```
-$ docker exec -it greenplumsparkjdbc_gpdb_1 /bin/bash
+$ docker exec -it greenplum-spark-jdbc_gpdb_1 /bin/bash
 [root@d632f535db87 data]# psql -h localhost -U gpadmin -d basic_db -c "select count(*) from basictable" -w pivotal
 psql: warning: extra command-line argument "pivotal" ignored
  count
@@ -203,17 +198,17 @@ psql: warning: extra command-line argument "pivotal" ignored
 scala> :paste
 // Entering paste mode (ctrl-D to finish)
 
-val jdbcUrl = s"jdbc:postgresql://greenplumsparkjdbc_gpdb_1/basic_db?user=gpadmin&password=pivotal"
+val jdbcUrl = s"jdbc:postgresql://greenplum-spark-jdbc_gpdb_1/basic_db?user=gpadmin&password=pivotal"
 val connectionProperties = new java.util.Properties()
 df.write.mode("Append") .jdbc( url = jdbcUrl, table = "basictable", connectionProperties = connectionProperties)
 
 // Exiting paste mode, now interpreting.
-jdbcUrl: String = jdbc:postgresql://greenplumsparkjdbc_gpdb_1/basic_db?user=gpadmin&password=pivotal
+jdbcUrl: String = jdbc:postgresql://greenplum-spark-jdbc_gpdb_1/basic_db?user=gpadmin&password=pivotal
 connectionProperties: java.util.Properties = {}
 ```
 3. Verify the write operation is successful by exec into GPDB container and run psql command-line. The total number records in the Greenplum table must be 2x of the original data.
 ```
-$ docker exec -it greenplumsparkjdbc_gpdb_1 /bin/bash
+$ docker exec -it greenplum-spark-jdbc_gpdb_1 /bin/bash
 [root@d632f535db87 data]# psql -h localhost -U gpadmin -d basic_db -c "select count(*) from basictable" -w pivotal
 psql: warning: extra command-line argument "pivotal" ignored
  count

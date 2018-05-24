@@ -51,8 +51,9 @@ services:
       - ./conf/worker:/conf
       - ./data:/tmp/data
   gpdb:
-      build: .
-      image: "pivotal/gpdb-spark"
+      image: "kochanpivotal/gpdb5oss"
+      hostname: "gpdbsne"
+      command: bin/bash
       ports:
        - "9090:9090"
        - "5432:5432"

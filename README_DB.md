@@ -11,20 +11,30 @@ To create a standalone Greenplum cluster with the following command below. It bu
 ```
 The Greenplum DB cluster will be running at `greenplumsparkjdbc_gpdb_1` with two segments. To access this docker instance, exec into a container:
 ```
-  $ docker exec -it greenplumsparkjdbc_gpdb_1 bin/bash
+  $ docker exec -it greenplum-spark-jdbc_gpdb_1 bin/bash
+
 ```  
 
 ##  How to run the setupDB.sh
 1. Connect to the Spark master docker image
 ```
- $ docker exec -it greenplumsparkjdbc_gpdb_1 bin/bash
+ $ docker exec -it greenplum-spark-jdbc_gpdb_1 bin/bash
+
 ```
 2. Execute the command below to access the scripts folder under "/code/data"
 ```
 [root@d632f535db87]# cd /code/data
 ```
+3. Run GREENPLUM by using 'startGPDB.sh'
+```
+root@c552f64a3f1a:/code/data# startGPDB.sh
+SSHD isn't running
+ * Starting OpenBSD Secure Shell server sshd                             [ OK ]
+SSHD is running...
+20180524:23:05:56:000096 gpstart:c552f64a3f1a:gpadmin-[INFO]:-Starting ..
+```
 
-3. Run `scripts/setupDB.sh`, in order to create a database and table.
+4. Run `scripts/setupDB.sh`, in order to create a database and table.
 ```
 [root@d632f535db87 data]# scripts/setupDB.sh
 psql:./sample_table.sql:1: NOTICE:  table "basictable" does not exist, skipping
